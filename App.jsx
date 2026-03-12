@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 const F = `@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap');`;
-/* ── LIGHT THEME TOKENS ── */
+/* - LIGHT THEME TOKENS - */
 const T = {
   bg:"#F5F7FA", surface:"#FFFFFF", surface2:"#EEF3EF", border:"#E2EAE4", border2:"#C6E8D6",
   text:"#0D1F14", text2:"#4A6455", text3:"#8FA898",
@@ -77,7 +77,7 @@ body,#root{font-family:'Tajawal',sans-serif;direction:rtl;background:#DDE8DF;min
 .ob-dot.d{width:6px}
 `;
 
-/* ─── Shared Components ─── */
+/* - Shared Components - */
 function Btn({ children, onClick, disabled, ghost, loading }) {
   const [rip, setRip] = useState([]);
   const click = (e) => {
@@ -114,7 +114,7 @@ function NotifToast({ msg, onDone }) {
   );
 }
 
-/* ─── Data ─── */
+/* - Data - */
 const STORES = [
   { id:1, name:"نون",     logo:"📦", cat:"إلكترونيات", cashback:"2%"  },
   { id:2, name:"H&M",     logo:"👗", cat:"أزياء",       cashback:"1.5%"},
@@ -155,9 +155,7 @@ const DEALS_DATA = [
   { id:4, user:"نورة ق.", avatar:"👩", product:"حذاء أديداس", store:"أديداس", saving:"60 ر.س",  votes:19, userVoted:false, cashback:"2%",  time:"أمس",         tag:"رياضة" },
 ];
 
-/* ══════════════════════════════════════════════════════
-   FLOW 1 — ONBOARDING
-══════════════════════════════════════════════════════ */
+/* FLOW 1 — ONBOARDING */
 const OB = [
   { color:"#10B981", title:"اشتري الآن، ادفع براحتك", sub:"قسّم أي مشتريات على 4 أقساط متساوية — بدون فوائد، بدون رسوم خفية",
     illus:() => (
@@ -218,9 +216,7 @@ function OnboardingScreen({ onDone }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   FLOW 2 — AUTH
-══════════════════════════════════════════════════════ */
+/* FLOW 2 — AUTH */
 function AuthScreen({ onDone }) {
   const [step, setStep] = useState(1);
   const [idNum, setIdNum]   = useState("");
@@ -328,9 +324,7 @@ function AuthScreen({ onDone }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   FLOW 3 — PIN
-══════════════════════════════════════════════════════ */
+/* FLOW 3 — PIN */
 const PIN_KEYS = [[1],[2],[3],[4],[5],[6],[7],[8],[9],[null],[0],["⌫"]];
 function PinScreen({ mode, onDone }) {
   const [pin,setPin]=useState(""); const [first,setFirst]=useState(""); const [step,setStep]=useState(1);
@@ -374,11 +368,9 @@ function PinScreen({ mode, onDone }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   MAIN APP SCREENS
-══════════════════════════════════════════════════════ */
+/* MAIN APP SCREENS */
 
-/* ── HOME ── */
+/* - HOME - */
 function HomeScreen({ go, notifCount, orders }) {
   const active = orders.filter(o=>o.status==="active");
   return (
@@ -506,7 +498,7 @@ function HomeScreen({ go, notifCount, orders }) {
   );
 }
 
-/* ── ORDERS ── */
+/* - ORDERS - */
 function OrdersScreen({ go, orders }) {
   const [tab, setTab] = useState("active");
   const filtered = orders.filter(o=>o.status===tab||(tab==="done"&&o.status==="done"));
@@ -556,7 +548,7 @@ function OrdersScreen({ go, orders }) {
   );
 }
 
-/* ── SHOP ── */
+/* - SHOP - */
 function ShopScreen({ go }) {
   const [search,setSearch]=useState(""); const [cat,setCat]=useState("الكل"); const [wishlist,setWishlist]=useState([]);
   const [compare,setCompare]=useState([]); const [compareOpen,setCompareOpen]=useState(false); const [sel,setSel]=useState(null);
@@ -647,7 +639,7 @@ function ShopScreen({ go }) {
   );
 }
 
-/* ── WALLET ── */
+/* - WALLET - */
 function WalletScreen({ go }) {
   const [tab,setTab]=useState("overview");
   const txns=[
@@ -720,7 +712,7 @@ function WalletScreen({ go }) {
   );
 }
 
-/* ── WITHDRAW ── */
+/* - WITHDRAW - */
 function WithdrawScreen({ go }) {
   const [step,setStep]=useState(1); const [method,setMethod]=useState(null); const [amount,setAmount]=useState(""); const [loading,setLoading]=useState(false); const [done,setDone]=useState(false);
   const balance=47; const amt=parseFloat(amount)||0;
@@ -761,7 +753,7 @@ function WithdrawScreen({ go }) {
   );
 }
 
-/* ── DEALS ── */
+/* - DEALS - */
 function DealsScreen({ go }) {
   const [deals,setDeals]=useState(DEALS_DATA); const [tag,setTag]=useState("الكل"); const [addOpen,setAddOpen]=useState(false); const [nd,setNd]=useState({product:"",store:"",saving:""}); const [loading,setLoading]=useState(false);
   const vote=(id)=>setDeals(d=>d.map(x=>x.id===id?{...x,votes:x.userVoted?x.votes-1:x.votes+1,userVoted:!x.userVoted}:x));
@@ -813,7 +805,7 @@ function DealsScreen({ go }) {
   );
 }
 
-/* ── SOCIAL ── */
+/* - SOCIAL - */
 function SocialScreen({ go }) {
   const [tab,setTab]=useState("group"); const [gStep,setGStep]=useState(1); const [product,setProduct]=useState(null); const [invited,setInvited]=useState([]); const [loading,setLoading]=useState(false); const [sent,setSent]=useState(false);
   const togInv=(id)=>setInvited(i=>i.includes(id)?i.filter(x=>x!==id):[...i,id]);
@@ -896,7 +888,7 @@ function SocialScreen({ go }) {
   );
 }
 
-/* ── NOTIFS ── */
+/* - NOTIFS - */
 function NotifsScreen({ go, notifs, setNotifs }) {
   return(
     <div style={{ padding:"44px 20px 20px" }}>
@@ -921,7 +913,7 @@ function NotifsScreen({ go, notifs, setNotifs }) {
   );
 }
 
-/* ── PROFILE ── */
+/* - PROFILE - */
 function ProfileScreen({ go }) {
   const items=[{icon:"💳",label:"طرق الدفع"},{icon:"🔐",label:"الأمان والحماية"},{icon:"🔔",label:"الإشعارات"},{icon:"📄",label:"كشف الحساب"},{icon:"❓",label:"المساعدة"},{icon:"📞",label:"تواصل معنا"}];
   return(
@@ -963,9 +955,7 @@ function ProfileScreen({ go }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   CHECKOUT — شاشة الدفع الكاملة
-══════════════════════════════════════════════════════ */
+/* CHECKOUT — شاشة الدفع الكاملة */
 function CheckoutScreen({ go, addOrder, showToast }) {
   const [step, setStep] = useState(1);
   const [store, setStore] = useState(null);
@@ -1094,9 +1084,7 @@ function CheckoutScreen({ go, addOrder, showToast }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   POSTPONE — تأجيل قسط
-══════════════════════════════════════════════════════ */
+/* POSTPONE — تأجيل قسط */
 function PostponeScreen({ go, orders, showToast }) {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading]   = useState(false);
@@ -1159,9 +1147,7 @@ function PostponeScreen({ go, orders, showToast }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   BUDGET — الميزانية الذكية
-══════════════════════════════════════════════════════ */
+/* BUDGET — الميزانية الذكية */
 function BudgetScreen({ go }) {
   const [budget, setBudget] = useState(2000);
   const [editing, setEditing] = useState(false);
@@ -1230,9 +1216,7 @@ function BudgetScreen({ go }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   REWARDS — نقاط الولاء
-══════════════════════════════════════════════════════ */
+/* REWARDS — نقاط الولاء */
 function RewardsScreen({ go }) {
   const [redeem, setRedeem] = useState(null);
   const points = 830;
@@ -1299,9 +1283,7 @@ function RewardsScreen({ go }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   GOAL — قسّط هدفك 🎯
-══════════════════════════════════════════════════════ */
+/* GOAL — قسّط هدفك 🎯 */
 const GOAL_ICONS = ["🏠","🚗","✈️","💍","📱","🎓","🏋️","💻","🎮","🌴"];
 
 function GoalScreen({ go, showToast }) {
@@ -1445,9 +1427,7 @@ function GoalScreen({ go, showToast }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   MAIN APP
-══════════════════════════════════════════════════════ */
+/* MAIN APP */
 export default function App() {
   // flow: onboarding → auth → pin → app
   const [flow, setFlow]       = useState("onboarding");
