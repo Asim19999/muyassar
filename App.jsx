@@ -1149,4 +1149,364 @@ export default function App() {
     </div>
   );
 }
-export default App;
+))}
+        </div>
+      )}
+      <Btn loading={loading} disabled={!selected} onClick={confirm}>تأكيد التأجيل ⏰</Btn>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   BUDGET — الميزانية الذكية
+══════════════════════════════════════════════════════ */
+function BudgetScreen({ go }) {
+  const [budget, setBudget] = useState(2000);
+  const [editing, setEditing] = useState(false);
+  const spent = 1413; const pct = Math.round((spent/budget)*100);
+  const color = pct>85?"#EF4444":pct>60?"#F59E0B":"#10B981";
+  const remaining = budget - spent;
+  const months=[{m:"يناير",spent:1800},{m:"فبراير",spent:1250},{m:"مارس",spent:1413}];
+
+  return (
+    <div style={{ padding:"44px 20px 20px" }}>
+      <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:22, animation:"fadeDown .35s ease" }}>
+        <BackBtn onClick={()=>go("home")}/><div style={{ fontSize:20, fontWeight:900, color:"#0D1F14" }}>الميزانية الذكية 📊</div>
+      </div>
+      <div style={{ textAlign:"center", marginBottom:22, animation:"scaleIn .4s ease" }}>
+        <div style={{ position:"relative", width:180, height:180, margin:"0 auto 16px" }}>
+          <svg width="180" height="180" style={{ transform:"rotate(-90deg)" }}>
+            <circle cx="90" cy="90" r="76" fill="none" stroke="#E2EAE4" strokeWidth="12"/>
+            <circle cx="90" cy="90" r="76" fill="none" stroke={color} strokeWidth="12"
+              strokeDasharray={2*Math.PI*76} strokeDashoffset={2*Math.PI*76*(1-pct/100)}
+              strokeLinecap="round" style={{ transition:"stroke-dashoffset 1s ease" }}/>
+          </svg>
+          <div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}>
+            <div style={{ fontSize:34, fontWeight:900, color:"#0D1F14" }}>{pct}%</div>
+            <div style={{ fontSize:11, color:"#8FA898" }}>مستخدم</div>
+          </div>
+        </div>
+        <div style={{ display:"flex", justifyContent:"center", gap:32 }}>
+          {[{label:"مصروف",val:${spent.toLocaleString()} ر.س,color:"#EF4444"},{label:"متبقي",val:${remaining.toLocaleString()} ر.س,color}].map((s,i)=>(
+            <div key={i}><div style={{ fontSize:18, fontWeight:900, color:s.color }}>{s.val}</div><div style={{ fontSize:11, color:"#8FA898" }}>{s.label}</div></div>
+          ))}
+        </div>
+      </div>
+      <div className="card-g" style={{ marginBottom:16, animation:"fadeUp .4s .08s ease both" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:editing?14:0 }}>
+          <div>
+            <div style={{ fontSize:13, fontWeight:700, color:"#4A6455" }}>الميزانية الشهرية</div>
+            {!editing&&<div style={{ fontSize:22, fontWeight:900, color:"#10B981", marginTop:4 }}>{budget.toLocaleString()} ر.س</div>}
+          </div>
+          <button onClick={()=>setEditing(!editing)} style={{ background:editing?"#E8F5EF":"#fff", border:1px solid ${editing?"#10B981":"#D4E8DB"}, borderRadius:10, padding:"7px 14px", color:editing?"#10B981":"#4A6455", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"Tajawal,sans-serif", transition:"all .2s" }}>
+            {editing?"حفظ ✓":"تعديل"}
+          </button>
+        </div>
+        {editing&&<input type="number" value={budget} onChange={e=>setBudget(Number(e.target.value))} style={{ width:"100%", background:"#fff", border:"1.5px solid #10B981", borderRadius:12, padding:"12px 16px", color:"#0D1F14", fontFamily:"Tajawal,sans-serif", fontSize:24, fontWeight:900, textAlign:"center", outline:"none" }}/>}
+      </div>
+      {pct>85&&<div style={{ background:"#FEE2E2", border:"1px solid #FECACA", borderRadius:14, padding:"12px 14px", marginBottom:16, display:"flex", gap:10, alignItems:"center" }}>
+        <span>⚠️</span><div><div style={{ fontSize:13, fontWeight:700, color:"#991B1B" }}>تجاوزت 85% من ميزانيتك!</div><div style={{ fontSize:11, color:"#B91C1C" }}>متبقي {remaining} ر.س لنهاية الشهر</div></div>
+      </div>}
+      <div style={{ animation:"fadeUp .4s .16s ease both" }}>
+        <div style={{ fontSize:14, fontWeight:800, color:"#0D1F14", marginBottom:14 }}>تاريخ الأشهر</div>
+        {months.map((m,i)=>{
+          const p=Math.round((m.spent/budget)*100); const c=p>85?"#EF4444":p>60?"#F59E0B":"#10B981";
+          return (
+            <div key={i} style={{ marginBottom:14 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6, fontSize:13 }}>
+                <span style={{ color:"#4A6455", fontWeight:600 }}>{m.m}</span>
+                <span style={{ color:c, fontWeight:800 }}>{m.spent.toLocaleString()} ر.س</span>
+              </div>
+              <div style={{ height:8, background:"#E2EAE4", borderRadius:8, overflow:"hidden" }}>
+                <div style={{ height:"100%", width:${p}%, background:c, borderRadius:8, opacity:.85 }}/>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   REWARDS — نقاط الولاء
+══════════════════════════════════════════════════════ */
+function RewardsScreen({ go }) {
+  const [redeem, setRedeem] = useState(null);
+  const points = 830;
+  const rewards=[
+    {icon:"💰",name:"خصم 50 ر.س",      points:500,cat:"خصم مباشر"},
+    {icon:"🚚",name:"شحن مجاني",        points:200,cat:"نون"},
+    {icon:"👗",name:"خصم 10% في H&M",  points:300,cat:"أزياء"},
+    {icon:"☕",name:"قهوة مجانية",      points:150,cat:"مطاعم"},
+    {icon:"📱",name:"حماية جهاز",      points:800,cat:"تقنية"},
+  ];
+
+  return (
+    <div style={{ padding:"44px 20px 20px" }}>
+      <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:20, animation:"fadeDown .35s ease" }}>
+        <BackBtn onClick={()=>go("home")}/><div style={{ fontSize:20, fontWeight:900, color:"#0D1F14" }}>نقاط الولاء ✦</div>
+      </div>
+      <div style={{ background:"linear-gradient(135deg,#FEF3C7,#FDE68A)", border:"1px solid #FCD34D", borderRadius:22, padding:22, marginBottom:18, textAlign:"center", animation:"scaleIn .4s ease" }}>
+        <div style={{ fontSize:13, color:"#92400E", marginBottom:8 }}>رصيد نقاطك</div>
+        <div style={{ fontSize:58, fontWeight:900, color:"#D97706", lineHeight:1, marginBottom:8, animation:"pulse 2s ease-in-out infinite" }}>{points}</div>
+        <div style={{ fontSize:13, color:"#A16207", marginBottom:14 }}>نقطة</div>
+        <span style={{ background:"rgba(245,158,11,.2)", color:"#92400E", border:"1px solid #FCD34D", borderRadius:20, padding:"5px 16px", fontSize:13, fontWeight:800 }}>مستوى فضي 🥈</span>
+        <div style={{ marginTop:16 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", fontSize:11, color:"#A16207", marginBottom:6 }}>
+            <span>{points} نقطة</span><span>1000 للمستوى الذهبي</span>
+          </div>
+          <div style={{ height:7, background:"rgba(255,255,255,.4)", borderRadius:7, overflow:"hidden" }}>
+            <div style={{ height:"100%", width:${(points/1000)*100}%, background:"#D97706", borderRadius:7 }}/>
+          </div>
+        </div>
+      </div>
+      <div className="card" style={{ marginBottom:16 }}>
+        <div style={{ fontSize:13, fontWeight:700, color:"#4A6455", marginBottom:12 }}>كيف تكسب نقاط؟</div>
+        {[["💳","كل 100 ر.س مشتريات","10 نقاط"],["⏰","الدفع المبكر","25 نقطة إضافية"],["👥","دعوة صديق","100 نقطة"],["🏪","أول شراء من متجر","50 نقطة"]].map(([icon,action,pts],i)=>(
+          <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:i<3?10:0, paddingBottom:i<3?10:0, borderBottom:i<3?"1px solid #EEF3EF":"none" }}>
+            <div style={{ display:"flex", gap:10, alignItems:"center" }}><span style={{ fontSize:18 }}>{icon}</span><span style={{ fontSize:13, color:"#4A6455" }}>{action}</span></div>
+            <span style={{ fontSize:13, fontWeight:800, color:"#F59E0B" }}>{pts}</span>
+          </div>
+        ))}
+      </div>
+      <div style={{ fontSize:14, fontWeight:800, color:"#0D1F14", marginBottom:14 }}>مكافآت متاحة</div>
+      {rewards.map((r,i)=>{
+        const can = points >= r.points;
+        return (
+          <div key={i} onClick={()=>can&&setRedeem(r)} style={{ background:can?"#fff":"#FAFCFA", border:1px solid ${can?"#E8EDE9":"#EEF3EF"}, borderRadius:16, padding:"12px 14px", marginBottom:10, display:"flex", gap:12, alignItems:"center", cursor:can?"pointer":"default", opacity:can?1:.55, boxShadow:can?"0 1px 8px rgba(0,0,0,.05)":"none", transition:"all .2s" }}
+            onMouseEnter={e=>can&&(e.currentTarget.style.borderColor="#C6E8D6")}
+            onMouseLeave={e=>e.currentTarget.style.borderColor=can?"#E8EDE9":"#EEF3EF"}>
+            <div style={{ width:44,height:44,borderRadius:13,background:"#FEF3C7",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22 }}>{r.icon}</div>
+            <div style={{ flex:1 }}><div style={{ fontWeight:700,fontSize:14,color:"#0D1F14" }}>{r.name}</div><div style={{ fontSize:11,color:"#8FA898" }}>{r.cat}</div></div>
+            <div style={{ textAlign:"left" }}><div style={{ fontSize:16,fontWeight:900,color:can?"#F59E0B":"#9BB5A3" }}>{r.points}</div><div style={{ fontSize:10,color:"#9BB5A3" }}>نقطة</div></div>
+          </div>
+        );
+      })}
+      {redeem&&(
+        <div className="modal-bg" onClick={e=>e.target===e.currentTarget&&setRedeem(null)}>
+          <div className="modal" style={{ textAlign:"center" }}>
+            <div style={{ fontSize:48, marginBottom:12 }}>{redeem.icon}</div>
+            <div style={{ fontSize:18, fontWeight:900, color:"#0D1F14", marginBottom:6 }}>{redeem.name}</div>
+            <div style={{ fontSize:13, color:"#6A8E7A", marginBottom:20 }}>سيتم خصم <span style={{ color:"#F59E0B", fontWeight:700 }}>{redeem.points} نقطة</span> من رصيدك</div>
+            <div style={{ display:"flex", gap:10 }}><Btn ghost onClick={()=>setRedeem(null)}>إلغاء</Btn><Btn onClick={()=>setRedeem(null)}>استبدل الآن ✦</Btn></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   GOAL — قسّط هدفك 🎯
+══════════════════════════════════════════════════════ */
+const GOAL_ICONS = ["🏠","🚗","✈️","💍","📱","🎓","🏋️","💻","🎮","🌴"];
+
+function GoalScreen({ go, showToast }) {
+  const [goals, setGoals]   = useState([
+    { id:1, icon:"🏠", name:"شقة أحلامي",  target:50000, saved:18000, monthly:2000, months:16 },
+    { id:2, icon:"✈️", name:"رحلة اليابان", target:8000,  saved:3200,  monthly:800,  months:6  },
+  ]);
+  const [addOpen, setAddOpen] = useState(false);
+  const [detOpen, setDetOpen] = useState(null);
+  const [form, setForm]       = useState({ icon:"🏠", name:"", target:"", monthly:"" });
+  const [iconPick, setIconPick] = useState(false);
+  const [loading, setLoading]  = useState(false);
+
+  const months = form.target && form.monthly ? Math.ceil(parseFloat(form.target)/parseFloat(form.monthly)) : 0;
+
+  const saveGoal = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setGoals(g => [...g, { id:Date.now(), icon:form.icon, name:form.name, target:parseFloat(form.target), saved:0, monthly:parseFloat(form.monthly), months }]);
+      setLoading(false); setAddOpen(false); setForm({ icon:"🏠", name:"", target:"", monthly:"" });
+      showToast({ icon:"🎯", title:"تم إنشاء هدفك!", sub:${form.name} — ${months} شهر للوصول });
+    }, 1400);
+  };
+
+  const contribute = (id) => {
+    setGoals(g => g.map(x => x.id===id ? { ...x, saved: Math.min(x.saved + x.monthly, x.target) } : x));
+    showToast({ icon:"✦", title:"تم إضافة دفعة!", sub:"استمر — أنت على المسار الصحيح 💪" });
+    setDetOpen(null);
+  };
+
+  return (
+    <div style={{ padding:"44px 20px 20px" }}>
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, animation:"fadeDown .35s ease" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+          <BackBtn onClick={()=>go("home")}/>
+          <div>
+            <div style={{ fontSize:20, fontWeight:900, color:"#0D1F14" }}>قسّط هدفك 🎯</div>
+            <div style={{ fontSize:11, color:"#8FA898" }}>ادّخر بأقساط شهرية</div>
+          </div>
+        </div>
+        <button onClick={()=>setAddOpen(true)} style={{ background:"linear-gradient(135deg,#10B981,#059669)", border:"none", borderRadius:14, padding:"10px 14px", color:"#fff", fontWeight:800, fontSize:13, cursor:"pointer", fontFamily:"Tajawal,sans-serif", boxShadow:"0 3px 12px rgba(16,185,129,.3)" }}>+ هدف</button>
+      </div>
+
+      {/* Summary */}
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:20, animation:"scaleIn .4s ease" }}>
+        <div className="card-g" style={{ textAlign:"center" }}>
+          <div style={{ fontSize:24, fontWeight:900, color:"#10B981" }}>{goals.length}</div>
+          <div style={{ fontSize:11, color:"#6A8E7A", marginTop:4 }}>هدف نشط</div>
+        </div>
+        <div style={{ background:"#FEF3C7", border:"1px solid #FDE68A", borderRadius:20, padding:16, textAlign:"center" }}>
+          <div style={{ fontSize:22, fontWeight:900, color:"#D97706" }}>{goals.reduce((a,g)=>a+g.saved,0).toLocaleString()}</div>
+          <div style={{ fontSize:11, color:"#92400E", marginTop:4 }}>ر.س مدّخر</div>
+        </div>
+      </div>
+
+      {/* Goals */}
+      {goals.map((g,i) => {
+        const pct = Math.min(Math.round((g.saved/g.target)*100),100);
+        const done = pct >= 100;
+        return (
+          <div key={g.id} onClick={()=>setDetOpen(g)} style={{ background:"#fff", border:1px solid ${done?"#C6E8D6":"#E8EDE9"}, borderRadius:22, padding:18, marginBottom:14, cursor:"pointer", boxShadow:"0 2px 12px rgba(0,0,0,.06)", transition:"border-color .2s", animation:fadeUp .4s ${i*.09}s ease both }}
+            onMouseEnter={e=>e.currentTarget.style.borderColor="#10B981"}
+            onMouseLeave={e=>e.currentTarget.style.borderColor=done?"#C6E8D6":"#E8EDE9"}>
+            <div style={{ display:"flex", gap:14, alignItems:"flex-start", marginBottom:14 }}>
+              <div style={{ width:52, height:52, borderRadius:16, background:done?"#E8F5EF":"#F5F7FA", display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, flexShrink:0 }}>{g.icon}</div>
+              <div style={{ flex:1 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                  <div style={{ fontWeight:800, fontSize:16, color:"#0D1F14" }}>{g.name}</div>
+                  {done
+                    ? <span style={{ background:"#E8F5EF", color:"#059669", border:"1px solid #C6E8D6", borderRadius:20, padding:"3px 10px", fontSize:11, fontWeight:800 }}>✓ مكتمل!</span>
+                    : <span style={{ background:"#F5F7FA", color:"#6A8E7A", borderRadius:20, padding:"3px 10px", fontSize:11, fontWeight:700 }}>{g.months} شهر</span>}
+                </div>
+                <div style={{ fontSize:12, color:"#8FA898", marginTop:3 }}>{g.monthly.toLocaleString()} ر.س / شهر</div>
+              </div>
+            </div>
+            <div style={{ height:10, background:"#EEF3EF", borderRadius:10, overflow:"hidden", marginBottom:8 }}>
+              <div style={{ height:"100%", width:${pct}%, background:done?"linear-gradient(90deg,#10B981,#34D399)":"linear-gradient(90deg,#38BDF8,#10B981)", borderRadius:10 }}/>
+            </div>
+            <div style={{ display:"flex", justifyContent:"space-between", fontSize:12 }}>
+              <span style={{ color:"#10B981", fontWeight:800 }}>{g.saved.toLocaleString()} ر.س</span>
+              <span style={{ color:"#8FA898" }}>{pct}% من {g.target.toLocaleString()} ر.س</span>
+            </div>
+          </div>
+        );
+      })}
+
+      {goals.length===0 && <div style={{ textAlign:"center", padding:"60px 0" }}><div style={{ fontSize:56, marginBottom:14 }}>🎯</div><div style={{ fontSize:15, fontWeight:700, color:"#8FA898" }}>ما عندك أهداف بعد</div></div>}
+
+      {/* Add modal */}
+      {addOpen && (
+        <div className="modal-bg" onClick={e=>e.target===e.currentTarget&&setAddOpen(false)}>
+          <div className="modal">
+            <div style={{ fontSize:18, fontWeight:900, color:"#0D1F14", marginBottom:18 }}>🎯 هدف جديد</div>
+            <div style={{ marginBottom:12 }}>
+              <div style={{ fontSize:12, fontWeight:700, color:"#6A8E7A", marginBottom:8 }}>الأيقونة</div>
+              <button onClick={()=>setIconPick(!iconPick)} style={{ width:52,height:52,borderRadius:14,background:"#F5F7FA",border:"1.5px solid #E2EAE4",fontSize:26,cursor:"pointer" }}>{form.icon}</button>
+              {iconPick && <div style={{ display:"flex",flexWrap:"wrap",gap:8,marginTop:10,background:"#F5F7FA",borderRadius:14,padding:10 }}>
+                {GOAL_ICONS.map(ic=><button key={ic} onClick={()=>{setForm(f=>({...f,icon:ic}));setIconPick(false);}} style={{ width:42,height:42,borderRadius:11,background:form.icon===ic?"#E8F5EF":"#fff",border:1.5px solid ${form.icon===ic?"#10B981":"#E2EAE4"},fontSize:20,cursor:"pointer" }}>{ic}</button>)}
+              </div>}
+            </div>
+            <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:14 }}>
+              <input className="inp" placeholder="اسم الهدف (مثال: شقة أحلامي)" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}/>
+              <input className="inp" placeholder="المبلغ المستهدف (ر.س)" type="number" value={form.target} onChange={e=>setForm(f=>({...f,target:e.target.value}))}/>
+              <input className="inp" placeholder="الدفعة الشهرية (ر.س)" type="number" value={form.monthly} onChange={e=>setForm(f=>({...f,monthly:e.target.value}))}/>
+            </div>
+            {months>0 && <div className="card-g" style={{ marginBottom:14, textAlign:"center" }}>
+              <div style={{ fontSize:12,color:"#6A8E7A",marginBottom:4 }}>ستحقق هدفك خلال</div>
+              <div style={{ fontSize:28,fontWeight:900,color:"#10B981" }}>{months} <span style={{ fontSize:13 }}>شهر</span></div>
+              <div style={{ fontSize:11,color:"#8FA898",marginTop:4 }}>≈ {(months/12).toFixed(1)} سنة</div>
+            </div>}
+            <div style={{ display:"flex",gap:10 }}>
+              <Btn ghost onClick={()=>setAddOpen(false)}>إلغاء</Btn>
+              <Btn loading={loading} disabled={!form.name||!form.target||!form.monthly} onClick={saveGoal}>إنشاء 🎯</Btn>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Detail modal */}
+      {detOpen && (
+        <div className="modal-bg" onClick={e=>e.target===e.currentTarget&&setDetOpen(null)}>
+          <div className="modal">
+            <div style={{ textAlign:"center",marginBottom:18 }}>
+              <div style={{ fontSize:50,marginBottom:8 }}>{detOpen.icon}</div>
+              <div style={{ fontSize:19,fontWeight:900,color:"#0D1F14" }}>{detOpen.name}</div>
+            </div>
+            {[["الهدف الكلي",${detOpen.target.toLocaleString()} ر.س],["المدّخر",${detOpen.saved.toLocaleString()} ر.س],["المتبقي",${(detOpen.target-detOpen.saved).toLocaleString()} ر.س],["الدفعة الشهرية",${detOpen.monthly.toLocaleString()} ر.س],["الأشهر المتبقية",${Math.max(0,Math.ceil((detOpen.target-detOpen.saved)/detOpen.monthly))} شهر]].map(([l,v],i)=>(
+              <div key={i} style={{ display:"flex",justifyContent:"space-between",padding:"10px 0",borderBottom:i<4?"1px solid #EEF3EF":"none" }}>
+                <span style={{ color:"#6A8E7A",fontSize:13 }}>{l}</span>
+                <span style={{ fontWeight:700,color:"#0D1F14",fontSize:13 }}>{v}</span>
+              </div>
+            ))}
+            <div style={{ display:"flex",gap:10,marginTop:16 }}>
+              <Btn ghost onClick={()=>setDetOpen(null)}>إغلاق</Btn>
+              <Btn onClick={()=>contribute(detOpen.id)}>دفع الشهري 💰</Btn>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════
+   MAIN APP
+══════════════════════════════════════════════════════ */
+export default function App() {
+  // flow: onboarding → auth → pin → app
+  const [flow, setFlow]       = useState("onboarding");
+  const [screen, setScreen]   = useState("home");
+  const [notifs, setNotifs]   = useState(NOTIFS_DATA);
+  const [orders, setOrders]   = useState(ORDERS_DATA);
+  const [toast, setToast]     = useState(null);
+
+  const unread = notifs.filter(n=>!n.read).length;
+  const go = (s) => setScreen(s);
+  const addOrder = (o) => setOrders(p=>[...p,o]);
+  const showToast = (msg) => setToast(msg);
+
+  const NAV = [
+    { id:"home",   icon:"⬡",  label:"الرئيسية" },
+    { id:"shop",   icon:"🛍️", label:"تسوق" },
+    { id:"wallet", icon:"💳", label:"محفظة" },
+    { id:"deals",  icon:"🔥", label:"صفقات" },
+    { id:"social", icon:"👥", label:"أصدقاء" },
+  ];
+
+  return (
+    <div className="app">
+      <style>{F + CSS}</style>
+      <div className="phone">
+        <div className="notch"/>
+        {toast && <NotifToast msg={toast} onDone={()=>setToast(null)}/>}
+
+        {flow==="onboarding" && <div className="screen-full"><OnboardingScreen onDone={()=>setFlow("auth")}/></div>}
+        {flow==="auth"       && <div className="screen-full"><AuthScreen onDone={()=>setFlow("pin")}/></div>}
+        {flow==="pin"        && <div className="screen-full"><PinScreen mode="setup" onDone={()=>{setFlow("app");showToast({icon:"🎉",title:"أهلاً بك في ميسّر!",sub:"حسابك جاهز — ابدأ التسوق"});}}/></div>}
+
+        {flow==="app" && (
+          <>
+            <div className="screen">
+              {screen==="home"     && <HomeScreen     go={go} notifCount={unread} orders={orders}/>}
+              {screen==="shop"     && <ShopScreen     go={go}/>}
+              {screen==="orders"   && <OrdersScreen   go={go} orders={orders}/>}
+              {screen==="checkout" && <CheckoutScreen go={go} addOrder={addOrder} showToast={showToast}/>}
+              {screen==="postpone" && <PostponeScreen go={go} orders={orders} showToast={showToast}/>}
+              {screen==="wallet"   && <WalletScreen   go={go}/>}
+              {screen==="withdraw" && <WithdrawScreen go={go}/>}
+              {screen==="budget"   && <BudgetScreen   go={go}/>}
+              {screen==="rewards"  && <RewardsScreen  go={go}/>}
+              {screen==="goal"     && <GoalScreen     go={go} showToast={showToast}/>}
+              {screen==="deals"    && <DealsScreen    go={go}/>}
+              {screen==="social"   && <SocialScreen   go={go}/>}
+              {screen==="notifs"   && <NotifsScreen   go={go} notifs={notifs} setNotifs={setNotifs}/>}
+              {screen==="profile"  && <ProfileScreen  go={go}/>}
+            </div>
+            <div className="bnav">
+              {NAV.map(n=>(
+                <button key={n.id} className={bnav-btn ${screen===n.id?"on":""}} onClick={()=>go(n.id)}>
+                  <span style={{ fontSize:19 }}>{n.icon}</span>
+                  {n.label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
