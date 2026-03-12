@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-const F = @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap');;
+const F = `@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap');`;
 const T = {
   bg:"#F5F7FA", surface:"#FFFFFF", surface2:"#EEF3EF", border:"#E2EAE4", border2:"#C6E8D6",
   text:"#0D1F14", text2:"#4A6455", text3:"#8FA898",
@@ -1149,4 +1149,5 @@ export default function App() {
     </div>
   );
 }
+
 
