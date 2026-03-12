@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ميسّر — اشتري الآن، ادفع براحتك</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;direction:rtl;background:#DDE8DF;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+#root{width:100%;max-width:390px;height:844px;background:#F5F7FA;border-radius:50px;border:1px solid #D0DDD2;position:relative;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.14),0 0 0 6px #fff;margin:0 auto}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:110px;height:30px;background:#1a1a1a;border-radius:0 0 18px 18px;z-index:20}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding-bottom:88px;scrollbar-width:none;background:#F5F7FA;display:none}
+.screen.active{display:block}
+.screen::-webkit-scrollbar{display:none}
+.screen-full{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;background:#F5F7FA;display:none}
+.screen-full.active{display:block}
+.screen-full::-webkit-scrollbar{display:none}
+
+/* Buttons */
+.btn{width:100%;padding:16px;border-radius:16px;border:none;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.btn-g{background:linear-gradient(135deg,#10B981,#059669);color:#fff;box-shadow:0 4px 16px rgba(16,185,129,.35)}
+.btn-g:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(16,185,129,.45)}
+.btn-g:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-ghost{background:#fff;border:1.5px solid #D4E8DB;color:#4A6455}
+.btn-ghost:hover{border-color:#10B981;color:#10B981}
+.btn-sm{padding:10px 20px;width:auto;font-size:14px;border-radius:12px}
+
+/* Cards */
+.card{background:#fff;border:1px solid #E8EDE9;border-radius:20px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.card-g{background:#E8F5EF;border:1px solid #C6E8D6;border-radius:20px;padding:16px}
+
+/* Input */
+.inp{width:100%;background:#fff;border:1.5px solid #E2EAE4;border-radius:14px;padding:13px 16px;color:#0D1F14;font-family:'Tajawal',sans-serif;font-size:15px;outline:none;transition:all .25s;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.inp:focus{border-color:#10B981;box-shadow:0 0 0 3px rgba(16,185,129,.1)}
+.inp::placeholder{color:#9BB5A3}
+
+/* Tabs */
+.tab-bar{display:flex;background:#EEF3EF;border-radius:14px;padding:4px;gap:4px}
+.tab{flex:1;padding:10px;border:none;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;color:#8FA898}
+.tab.on{background:#fff;color:#10B981;box-shadow:0 1px 6px rgba(0,0,0,.08)}
+
+/* Chips */
+.chip{display:inline-flex;align-items:center;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;border:1.5px solid transparent;font-family:'Tajawal',sans-serif}
+.chip.on{background:#E8F5EF;color:#10B981;border-color:#C6E8D6}
+.chip.off{background:#fff;color:#7A9E8A;border-color:#E2EAE4}
+
+/* Modal */
+.modal-bg{position:absolute;inset:0;background:rgba(13,31,20,.4);backdrop-filter:blur(8px);z-index:40;display:none;align-items:flex-end}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:32px 32px 0 0;padding:28px 24px 44px;width:100%;animation:slideUp .35s ease;border-top:2px solid #E8F5EF;max-height:82vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.1)}
+
+/* Bottom Nav */
+.bnav{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-top:1px solid #EAF0EB;padding:8px 4px 20px;display:flex;justify-content:space-around;z-index:30;box-shadow:0 -2px 16px rgba(0,0,0,.06)}
+.bnav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;cursor:pointer;border-radius:14px;font-size:10px;font-weight:700;color:#9BB5A3;border:none;background:transparent;font-family:'Tajawal',sans-serif;transition:all .2s}
+.bnav-btn.on{color:#10B981;background:#E8F5EF}
+
+/* Pin */
+.pin-dot{width:18px;height:18px;border-radius:50%;border:2px solid #C6E8D6;transition:all .25s;background:#EEF3EF}
+.pin-dot.filled{background:#10B981;border-color:#10B981}
+.pin-key{width:72px;height:72px;border-radius:22px;background:#fff;border:1.5px solid #E2EAE4;color:#0D1F14;font-family:'Tajawal',sans-serif;font-size:22px;font-weight:800;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.pin-key:hover{background:#E8F5EF;border-color:#10B981}
+.pin-key:active{transform:scale(.93)}
+
+/* Toast */
+.notif-toast{position:absolute;top:44px;left:12px;right:12px;background:#fff;border:1px solid #C6E8D6;border-radius:16px;padding:14px 16px;z-index:50;display:flex;gap:12px;align-items:center;box-shadow:0 8px 28px rgba(0,0,0,.1)}
+
+/* Onboarding dots */
+.ob-dot{height:6px;border-radius:3px;transition:all .4s;background:#D4E8DB}
+.ob-dot.a{width:22px;background:#10B981}
+.ob-dot.d{width:6px}
+
+/* Back button */
+.back-btn{width:38px;height:38px;border-radius:12px;background:#F5F7FA;border:1.5px solid #E2EAE4;cursor:pointer;color:#0D1F14;font-size:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+
+/* Progress bar */
+.progress-bar{height:8px;background:#EEF3EF;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;transition:width .6s ease;background:linear-gradient(90deg,#10B981,#34D399)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 24px rgba(16,185,129,.3)}50%{box-shadow:0 0 55px rgba(16,185,129,.6)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes orbit{from{transform:rotate(0deg) translateX(38px) rotate(0deg)}to{transform:rotate(360deg) translateX(38px) rotate(-360deg)}}
+@keyframes notifSlide{from{transform:translateX(110%)}to{transform:translateX(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes pinDot{0%{transform:scale(0)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+@keyframes checkPop{0%{transform:scale(0) rotate(-20deg)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes heartPop{0%{transform:scale(1)}40%{transform:scale(1.4)}100%{transform:scale(1)}}
+@keyframes badgeIn{0%{transform:scale(0) rotate(-20deg)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="notch"></div>
+
+  <!-- ONBOARDING -->
+  <div id="screen-onboarding" class="screen-full active" style="background:#F5F7FA;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:60px 28px 48px">
+  </div>
+
+  <!-- AUTH -->
+  <div id="screen-auth" class="screen-full" style="padding:60px 28px 40px">
+  </div>
+
+  <!-- PIN SETUP -->
+  <div id="screen-pin-setup" class="screen-full" style="padding:60px 28px 40px">
+  </div>
+
+  <!-- PIN LOGIN -->
+  <div id="screen-pin-login" class="screen-full" style="padding:60px 28px 40px">
+  </div>
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen">
+  </div>
+
+  <!-- SHOP -->
+  <div id="screen-shop" class="screen">
+  </div>
+
+  <!-- WALLET -->
+  <div id="screen-wallet" class="screen">
+  </div>
+
+  <!-- ORDERS -->
+  <div id="screen-orders" class="screen">
+  </div>
+
+  <!-- PROFILE -->
+  <div id="screen-profile" class="screen">
+  </div>
+
+  <!-- DEALS -->
+  <div id="screen-deals" class="screen">
+  </div>
+
+  <!-- NOTIFS -->
+  <div id="screen-notifs" class="screen">
+  </div>
+
+  <!-- CHECKOUT -->
+  <div id="screen-checkout" class="screen-full">
+  </div>
+
+  <!-- POSTPONE -->
+  <div id="screen-postpone" class="screen-full">
+  </div>
+
+  <!-- BUDGET -->
+  <div id="screen-budget" class="screen-full">
+  </div>
+
+  <!-- REWARDS -->
+  <div id="screen-rewards" class="screen-full">
+  </div>
+
+  <!-- GOAL -->
+  <div id="screen-goal" class="screen-full">
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bnav" id="bnav" style="display:none">
+    <button class="bnav-btn on" data-nav="home" onclick="go('home')"><span style="font-size:19px">🏠</span>الرئيسية</button>
+    <button class="bnav-btn" data-nav="shop" onclick="go('shop')"><span style="font-size:19px">🛍️</span>التسوق</button>
+    <button class="bnav-btn" data-nav="wallet" onclick="go('wallet')"><span style="font-size:19px">💳</span>محفظتي</button>
+    <button class="bnav-btn" data-nav="notifs" onclick="go('notifs')"><span style="font-size:19px">🔔</span>إشعارات</button>
+    <button class="bnav-btn" data-nav="profile" onclick="go('profile')"><span style="font-size:19px">👤</span>حسابي</button>
+  </nav>
+
+  <!-- TOAST -->
+  <div class="notif-toast" id="toast" style="display:none;animation:notifSlide .35s ease">
+    <div id="toast-icon" style="font-size:24px"></div>
+    <div style="flex:1">
+      <div id="toast-title" style="font-size:13px;font-weight:700;color:#0D1F14"></div>
+      <div id="toast-sub" style="font-size:12px;color:#6A8E7A;margin-top:2px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+var state = {
+  screen: 'onboarding',
+  prevScreen: null,
+  obIdx: 0,
+  pin: '',
+  pinEntry: '',
+  loggedIn: false,
+  notifs: [
+    {id:1,icon:'⏰',title:'قسطك القادم بعد 5 أيام',sub:'آيفون 15 برو — 1,250 ريال',time:'منذ ساعة',read:false},
+    {id:2,icon:'✅',title:'تم قبول طلبك',sub:'حذاء نايك — 4 أقساط',time:'أمس',read:false},
+    {id:3,icon:'✦',title:'ربحت 150 نقطة!',sub:'مكافأة الدفع المبكر',time:'3 أيام',read:true},
+    {id:4,icon:'🏪',title:'متجر جديد انضم',sub:'سيفورا — خصم 10% لأول طلب',time:'أسبوع',read:true},
+  ],
+  orders: [
+    {id:'MY-001',store:'نون',item:'آيفون 15 برو',total:4999,paid:2,of:4,next:'15 مارس',daysLeft:5,logo:'📦',status:'active'},
+    {id:'MY-002',store:'أديداس',item:'حذاء نايك',total:599,paid:1,of:4,next:'20 مارس',daysLeft:10,logo:'👟',status:'active'},
+    {id:'MY-003',store:'إيكيا',item:'طاولة مكتبية',total:850,paid:4,of:4,next:'—',daysLeft:0,logo:'🏠',status:'done'},
+  ],
+  deals: [
+    {id:1,user:'أحمد ع.',avatar:'👨',product:'آيفون 15 برو',store:'نون',saving:'200 ر.س',votes:47,userVoted:false,cashback:'2%',time:'منذ ساعة',tag:'إلكترونيات'},
+    {id:2,user:'سارة م.',avatar:'👩',product:'عطر شانيل',store:'سيفورا',saving:'80 ر.س',votes:31,userVoted:true,cashback:'1.5%',time:'منذ 3 ساعات',tag:'جمال'},
+    {id:3,user:'محمد خ.',avatar:'🧑',product:'سماعة JBL',store:'أمازون',saving:'150 ر.س',votes:28,userVoted:false,cashback:'1.5%',time:'أمس',tag:'إلكترونيات'},
+    {id:4,user:'نورة ق.',avatar:'👩',product:'حذاء أديداس',store:'أديداس',saving:'60 ر.س',votes:19,userVoted:false,cashback:'2%',time:'أمس',tag:'رياضة'},
+  ],
+  checkoutProduct: null,
+  checkoutStep: 1,
+  checkoutInstallments: 4,
+  shopFilter: 'الكل',
+  shopSearch: '',
+  walletTab: 'active',
+  goals: [
+    {id:1,name:'سماعة سوني',icon:'🎧',target:1299,saved:650,months:3},
+    {id:2,name:'رحلة دبي',icon:'✈️',target:5000,saved:1800,months:8},
+  ],
+  toastTimer: null,
+  postponeSelected: null,
+};
+
+var PRODUCTS = [
+  {id:1,name:'آيفون 15 برو',store:'نون',cat:'إلكترونيات',price:4999,img:'📱',cashback:'2%',rating:4.8,installments:[4,6,12],badge:'الأكثر مبيعاً'},
+  {id:2,name:'سماعة سوني XM5',store:'أمازون',cat:'إلكترونيات',price:1299,img:'🎧',cashback:'1.5%',rating:4.7,installments:[4,6],badge:''},
+  {id:3,name:'حذاء نايك',store:'أديداس',cat:'رياضة',price:599,img:'👟',cashback:'2%',rating:4.5,installments:[4],badge:'عرض محدود'},
+  {id:4,name:'عطر أرماني',store:'سيفورا',cat:'جمال',price:420,img:'🌹',cashback:'1.5%',rating:4.6,installments:[4,6],badge:''},
+  {id:5,name:'طاولة مكتبية',store:'إيكيا',cat:'أثاث',price:850,img:'🪑',cashback:'1%',rating:4.3,installments:[4,6,12],badge:''},
+  {id:6,name:'جاكيت H&M',store:'H&M',cat:'أزياء',price:320,img:'🧥',cashback:'1.5%',rating:4.4,installments:[4],badge:'جديد'},
+];
+
+var NAV_SCREENS = ['home','shop','wallet','notifs','profile'];
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function go(screen) {
+  // Hide all
+  document.querySelectorAll('.screen, .screen-full').forEach(function(s) {
+    s.classList.remove('active');
+    s.style.display = '';
+  });
+
+  var el = document.getElementById('screen-' + screen);
+  if (!el) return;
+
+  // Show
+  if (el.classList.contains('screen-full')) {
+    el.style.display = 'flex';
+    el.style.flexDirection = 'column';
+  } else {
+    el.style.display = 'block';
+  }
+  el.classList.add('active');
+  el.scrollTop = 0;
+
+  // Nav
+  var bnav = document.getElementById('bnav');
+  if (NAV_SCREENS.indexOf(screen) >= 0) {
+    bnav.style.display = 'flex';
+    document.querySelectorAll('.bnav-btn').forEach(function(b) {
+      b.classList.toggle('on', b.dataset.nav === screen);
+    });
+  } else {
+    bnav.style.display = 'none';
+  }
+
+  state.prevScreen = state.screen;
+  state.screen = screen;
+
+  // Render
+  renderScreen(screen);
+}
+
+function goBack() {
+  var prev = state.prevScreen || 'home';
+  if (['home','shop','wallet','notifs','profile'].indexOf(prev) < 0) prev = 'home';
+  go(prev);
+}
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+function showToast(icon, title, sub) {
+  var t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-sub').textContent = sub;
+  t.style.display = 'flex';
+  if (state.toastTimer) clearTimeout(state.toastTimer);
+  state.toastTimer = setTimeout(function() { t.style.display = 'none'; }, 3000);
+}
+
+// ═══════════════════════════════════════
+// RENDER SCREENS
+// ═══════════════════════════════════════
+function renderScreen(screen) {
+  var fn = {
+    'onboarding': renderOnboarding,
+    'auth': renderAuth,
+    'pin-setup': renderPinSetup,
+    'pin-login': renderPinLogin,
+    'home': renderHome,
+    'shop': renderShop,
+    'wallet': renderWallet,
+    'orders': renderOrders,
+    'profile': renderProfile,
+    'deals': renderDeals,
+    'notifs': renderNotifs,
+    'checkout': renderCheckout,
+    'postpone': renderPostpone,
+    'budget': renderBudget,
+    'rewards': renderRewards,
+    'goal': renderGoal,
+  }[screen];
+  if (fn) fn();
+}
+
+// ═══════════════════════════════════════
+// ONBOARDING
+// ═══════════════════════════════════════
+var OB_DATA = [
+  {color:'#10B981',title:'اشتري الآن، ادفع براحتك',sub:'قسّم أي مشتريات على 4 أقساط متساوية — بدون فوائد، بدون رسوم خفية',
+   illus:'<div style="width:100px;height:100px;border-radius:28px;background:linear-gradient(135deg,#10B981,#065F46);display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:900;color:#fff;animation:glow 2s ease-in-out infinite">م</div>'},
+  {color:'#F59E0B',title:'اكسب نقاط مع كل قسط',sub:'كل قسط يكسبك نقاط ذهبية — استبدلها بخصومات في متاجرك المفضلة',
+   illus:'<div style="width:120px;height:120px;border-radius:50%;background:rgba(245,158,11,.12);border:2px solid rgba(245,158,11,.3);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;animation:pulse 2s ease-in-out infinite"><div style="font-size:38px">✦</div><div style="font-size:22px;font-weight:900;color:#F59E0B">830</div><div style="font-size:11px;color:#6A8E7A">نقطة</div></div>'},
+  {color:'#38BDF8',title:'قسّط مع أصدقائك',sub:'أول تطبيق يتيح الشراء الجماعي — كل شخص يدفع نصيبه باستقلالية',
+   illus:'<div style="width:80px;height:80px;border-radius:50%;background:rgba(56,189,248,.15);border:2px solid rgba(56,189,248,.4);display:flex;align-items:center;justify-content:center;font-size:36px">◈</div>'},
+];
+
+function renderOnboarding() {
+  var el = document.getElementById('screen-onboarding');
+  var d = OB_DATA[state.obIdx];
+  var dots = OB_DATA.map(function(_,i) {
+    return '<div class="ob-dot ' + (i===state.obIdx?'a':'d') + '"></div>';
+  }).join('');
+
+  el.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:space-between;height:100%;padding:60px 28px 48px">'
+    + '<div style="text-align:center;animation:fadeDown .4s ease">'
+    + '<div style="font-size:28px;font-weight:900;color:#0D1F14;margin-bottom:8px">ميسّر</div>'
+    + '<div style="font-size:13px;color:#6A8E7A">التقسيط الذكي</div>'
+    + '</div>'
+    + '<div style="display:flex;flex-direction:column;align-items:center;gap:28px;animation:scaleIn .5s ease">'
+    + '<div style="width:200px;height:200px;display:flex;align-items:center;justify-content:center">' + d.illus + '</div>'
+    + '<div style="text-align:center">'
+    + '<div style="font-size:22px;font-weight:900;color:#0D1F14;margin-bottom:12px;line-height:1.3">' + d.title + '</div>'
+    + '<div style="font-size:14px;color:#6A8E7A;line-height:1.6">' + d.sub + '</div>'
+    + '</div>'
+    + '</div>'
+    + '<div style="width:100%">'
+    + '<div style="display:flex;justify-content:center;gap:6px;margin-bottom:24px">' + dots + '</div>'
+    + '<button class="btn btn-g" onclick="obNext()">' + (state.obIdx<2 ? 'التالي ←' : 'ابدأ الآن') + '</button>'
+    + (state.obIdx>0 ? '<button class="btn btn-ghost" style="margin-top:10px" onclick="go(\'auth\')">تخطَّ</button>' : '')
+    + '</div>'
+    + '</div>';
+}
+
+function obNext() {
+  if (state.obIdx < 2) {
+    state.obIdx++;
+    renderOnboarding();
+  } else {
+    go('auth');
+  }
+}
+
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+function renderAuth() {
+  var el = document.getElementById('screen-auth');
+  el.innerHTML = '<div style="padding:60px 28px 40px;display:flex;flex-direction:column;height:100%">'
+    + '<div style="text-align:center;margin-bottom:40px;animation:fadeDown .4s ease">'
+    + '<div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,#10B981,#065F46);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#fff;margin:0 auto 16px;animation:glow 2s infinite">م</div>'
+    + '<div style="font-size:24px;font-weight:900;color:#0D1F14">أهلاً بك في ميسّر</div>'
+    + '<div style="font-size:14px;color:#6A8E7A;margin-top:6px">سجّل دخولك للمتابعة</div>'
+    + '</div>'
+    + '<div style="display:flex;flex-direction:column;gap:14px;animation:fadeUp .4s ease">'
+    + '<input class="inp" id="auth-phone" type="tel" placeholder="رقم الجوال" style="text-align:center;font-size:18px;letter-spacing:2px">'
+    + '<input class="inp" id="auth-name" type="text" placeholder="الاسم الكامل" style="text-align:center">'
+    + '</div>'
+    + '<div style="margin-top:auto;padding-top:24px;animation:fadeUp .5s ease">'
+    + '<button class="btn btn-g" onclick="authNext()">التالي ←</button>'
+    + '<div style="text-align:center;margin-top:16px;font-size:12px;color:#8FA898">بالمتابعة توافق على شروط الاستخدام وسياسة الخصوصية</div>'
+    + '</div>'
+    + '</div>';
+}
+
+function authNext() {
+  var phone = document.getElementById('auth-phone').value;
+  var name = document.getElementById('auth-name').value;
+  if (!phone || !name) {
+    showToast('⚠️', 'يرجى إدخال البيانات', 'رقم الجوال والاسم مطلوبان');
+    return;
+  }
+  go('pin-setup');
+}
+
+// ═══════════════════════════════════════
+// PIN
+// ═══════════════════════════════════════
+function renderPinScreen(title, sub, onDone) {
+  return '<div style="display:flex;flex-direction:column;align-items:center;height:100%;padding:80px 28px 48px">'
+    + '<div style="text-align:center;margin-bottom:40px;animation:fadeDown .4s ease">'
+    + '<div style="font-size:22px;font-weight:900;color:#0D1F14">' + title + '</div>'
+    + '<div style="font-size:14px;color:#6A8E7A;margin-top:8px">' + sub + '</div>'
+    + '</div>'
+    + '<div style="display:flex;gap:16px;margin-bottom:48px" id="pin-dots">' + renderPinDots() + '</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(3,72px);gap:12px;justify-content:center">'
+    + [1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(function(k) {
+      if (k === '') return '<div></div>';
+      return '<button class="pin-key" onclick="pinPress(\'' + k + '\',\'' + onDone + '\')">' + k + '</button>';
+    }).join('')
+    + '</div>'
+    + '</div>';
+}
+
+function renderPinDots() {
+  return [0,1,2,3].map(function(i) {
+    return '<div class="pin-dot' + (i < state.pinEntry.length ? ' filled' : '') + '"></div>';
+  }).join('');
+}
+
+function renderPinSetup() {
+  var el = document.getElementById('screen-pin-setup');
+  el.innerHTML = renderPinScreen('أنشئ رمز الدخول', 'سيُستخدم للتحقق من هويتك', 'setup');
+}
+
+function renderPinLogin() {
+  var el = document.getElementById('screen-pin-login');
+  el.innerHTML = renderPinScreen('أدخل رمز الدخول', 'مرحباً بعودتك! 👋', 'login');
+}
+
+function pinPress(k, mode) {
+  if (k === '⌫') {
+    state.pinEntry = state.pinEntry.slice(0,-1);
+  } else if (state.pinEntry.length < 4) {
+    state.pinEntry += k;
+  }
+  document.getElementById('pin-dots').innerHTML = renderPinDots();
+  if (state.pinEntry.length === 4) {
+    setTimeout(function() {
+      if (mode === 'setup') {
+        state.pin = state.pinEntry;
+        state.pinEntry = '';
+        state.loggedIn = true;
+        showToast('✅','تم إنشاء الرمز','يمكنك الآن الدخول بأمان');
+        go('home');
+      } else {
+        if (state.pinEntry === state.pin || state.pin === '') {
+          state.pinEntry = '';
+          state.loggedIn = true;
+          go('home');
+        } else {
+          state.pinEntry = '';
+          document.getElementById('pin-dots').innerHTML = renderPinDots();
+          showToast('❌','رمز خاطئ','حاول مرة أخرى');
+          document.getElementById('screen-pin-login').style.animation = 'shake .3s ease';
+          setTimeout(function() { document.getElementById('screen-pin-login').style.animation = ''; }, 300);
+        }
+      }
+    }, 150);
+  }
+}
+
+// ═══════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════
+function renderHome() {
+  var el = document.getElementById('screen-home');
+  var activeOrders = state.orders.filter(function(o) { return o.status === 'active'; });
+  var upcoming = activeOrders.filter(function(o) { return o.daysLeft <= 7; });
+
+  el.innerHTML = ''
+    + '<div style="padding:44px 20px 20px">'
+    // Header
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;animation:fadeDown .35s ease">'
+    + '<div>'
+    + '<div style="font-size:13px;color:#6A8E7A">مرحباً،</div>'
+    + '<div style="font-size:22px;font-weight:900;color:#0D1F14">محمد عاصم 👋</div>'
+    + '</div>'
+    + '<div style="position:relative">'
+    + '<button onclick="go(\'notifs\')" style="width:42px;height:42px;border-radius:14px;background:#fff;border:1px solid #E2EAE4;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center">🔔</button>'
+    + (state.notifs.filter(function(n){return !n.read;}).length > 0 ? '<div style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;background:#EF4444;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700">' + state.notifs.filter(function(n){return !n.read;}).length + '</div>' : '')
+    + '</div>'
+    + '</div>'
+
+    // Balance card
+    + '<div style="background:linear-gradient(135deg,#10B981,#065F46);border-radius:24px;padding:24px;margin-bottom:20px;color:#fff;animation:scaleIn .4s ease;position:relative;overflow:hidden">'
+    + '<div style="position:absolute;top:-20px;left:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>'
+    + '<div style="position:absolute;bottom:-30px;right:-10px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.04)"></div>'
+    + '<div style="font-size:13px;opacity:.8;margin-bottom:6px">الحد المتاح</div>'
+    + '<div style="font-size:36px;font-weight:900;margin-bottom:4px">8,500 <span style="font-size:18px">ر.س</span></div>'
+    + '<div style="font-size:12px;opacity:.7">من أصل 15,000 ر.س</div>'
+    + '<div style="margin-top:16px;background:rgba(255,255,255,.15);border-radius:8px;height:6px;overflow:hidden">'
+    + '<div style="height:100%;width:56%;background:rgba(255,255,255,.7);border-radius:8px"></div>'
+    + '</div>'
+    + '<div style="display:flex;justify-content:space-between;margin-top:16px">'
+    + '<div><div style="font-size:11px;opacity:.7">نقاطي</div><div style="font-size:16px;font-weight:800">830 ✦</div></div>'
+    + '<div style="text-align:left"><div style="font-size:11px;opacity:.7">مصروف هذا الشهر</div><div style="font-size:16px;font-weight:800">1,413 ر.س</div></div>'
+    + '</div>'
+    + '</div>'
+
+    // Quick actions
+    + '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;animation:fadeUp .4s ease">'
+    + [['🛍️','تسوق','shop'],['📋','أقساطي','orders'],['💳','محفظة','wallet'],['🎯','هدف','goal']].map(function(a) {
+      return '<button onclick="go(\'' + a[2] + '\')" style="background:#fff;border:1px solid #E8EDE9;border-radius:16px;padding:14px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .2s">'
+        + '<span style="font-size:22px">' + a[0] + '</span>'
+        + '<span style="font-size:11px;font-weight:700;color:#4A6455">' + a[1] + '</span>'
+        + '</button>';
+    }).join('')
+    + '</div>'
+
+    // Upcoming payments
+    + (upcoming.length > 0 ?
+      '<div style="margin-bottom:20px;animation:fadeUp .45s ease">'
+      + '<div style="font-size:16px;font-weight:800;color:#0D1F14;margin-bottom:12px">⏰ أقساط قريبة</div>'
+      + upcoming.map(function(o) {
+        return '<div class="card" style="margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="go(\'orders\')">'
+          + '<div style="width:44px;height:44px;border-radius:14px;background:#E8F5EF;display:flex;align-items:center;justify-content:center;font-size:22px">' + o.logo + '</div>'
+          + '<div style="flex:1">'
+          + '<div style="font-size:14px;font-weight:700;color:#0D1F14">' + o.item + '</div>'
+          + '<div style="font-size:12px;color:#6A8E7A">' + o.next + ' — ' + Math.round(o.total/o.of).toLocaleString() + ' ر.س</div>'
+          + '</div>'
+          + '<div style="background:' + (o.daysLeft<=3?'#FEE2E2':'#E8F5EF') + ';color:' + (o.daysLeft<=3?'#EF4444':'#10B981') + ';border-radius:10px;padding:4px 10px;font-size:12px;font-weight:700">' + o.daysLeft + ' أيام</div>'
+          + '</div>';
+      }).join('')
+      + '</div>'
+    : '')
+
+    // Featured products
+    + '<div style="animation:fadeUp .5s ease">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+    + '<div style="font-size:16px;font-weight:800;color:#0D1F14">🔥 مميزة لك</div>'
+    + '<button onclick="go(\'shop\')" style="font-size:13px;color:#10B981;font-weight:700;background:none;border:none;cursor:pointer">عرض الكل</button>'
+    + '</div>'
+    + '<div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none">'
+    + PRODUCTS.slice(0,4).map(function(p) {
+      return '<div style="min-width:150px;background:#fff;border:1px solid #E8EDE9;border-radius:18px;padding:14px;cursor:pointer;flex-shrink:0" onclick="openCheckout(' + p.id + ')">'
+        + (p.badge ? '<div style="background:#E8F5EF;color:#10B981;border-radius:8px;padding:3px 8px;font-size:10px;font-weight:700;margin-bottom:8px;display:inline-block">' + p.badge + '</div>' : '<div style="height:22px;margin-bottom:8px"></div>')
+        + '<div style="font-size:32px;margin-bottom:8px">' + p.img + '</div>'
+        + '<div style="font-size:13px;font-weight:700;color:#0D1F14;margin-bottom:4px">' + p.name + '</div>'
+        + '<div style="font-size:14px;font-weight:900;color:#10B981">' + p.price.toLocaleString() + ' ر.س</div>'
+        + '<div style="font-size:11px;color:#8FA898">4 × ' + Math.round(p.price/4).toLocaleString() + ' ر.س</div>'
+        + '</div>';
+    }).join('')
+    + '</div>'
+    + '</div>'
+    + '</div>';
+}
+
+// ═══════════════════════════════════════
+// SHOP
+// ═══════════════════════════════════════
+function renderShop() {
+  var el = document.getElementById('screen-shop');
+  var cats = ['الكل','إلكترونيات','رياضة','جمال','أثاث','أزياء'];
+  var filtered = PRODUCTS.filter(function(p) {
+    var catOk = state.shopFilter === 'الكل' || p.cat === state.shopFilter;
+    var searchOk = !state.shopSearch || p.name.includes(state.shopSearch) || p.store.includes(state.shopSearch);
+    return catOk && searchOk;
+  });
+
+  el.innerHTML = '<div style="padding:44px 20px 20px">'
+    + '<div style="font-size:22px;font-weight:900;color:#0D1F14;margin-bottom:16px;animation:fadeDown .35s ease">🛍️ التسوق</div>'
+    + '<input class="inp" placeholder="ابحث عن منتج أو متجر..." style="margin-bottom:14px" oninput="shopSearch(this.value)" value="' + state.shopSearch + '">'
+    + '<div style="display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px;scrollbar-width:none">'
+    + cats.map(function(c) {
+      return '<button class="chip ' + (state.shopFilter===c?'on':'off') + '" onclick="shopFilter(\'' + c + '\')">' + c + '</button>';
+    }).join('')
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+    + filtered.map(function(p) {
+      return '<div style="background:#fff;border:1px solid #E8EDE9;border-radius:18px;padding:14px;cursor:pointer" onclick="openCheckout(' + p.id + ')">'
+        + (p.badge ? '<div style="background:#E8F5EF;color:#10B981;border-radius:8px;padding:3px 8px;font-size:10px;font-weight:700;margin-bottom:8px;display:inline-block">' + p.badge + '</div><br>' : '')
+        + '<div style="font-size:36px;margin-bottom:8px">' + p.img + '</div>'
+        + '<div style="font-size:13px;font-weight:700;color:#0D1F14;margin-bottom:4px;line-height:1.3">' + p.name + '</div>'
+        + '<div style="font-size:11px;color:#8FA898;margin-bottom:6px">' + p.store + ' • ' + '⭐'.repeat(Math.floor(p.rating)) + '</div>'
+        + '<div style="font-size:15px;font-weight:900;color:#10B981">' + p.price.toLocaleString() + ' ر.س</div>'
+        + '<div style="font-size:11px;color:#8FA898">4 × ' + Math.round(p.price/4).toLocaleString() + '</div>'
+        + '<div style="font-size:10px;color:#F59E0B;margin-top:4px">cashback ' + p.cashback + '</div>'
+        + '</div>';
+    }).join('')
+    + '</div>'
+    + '</div>';
+}
+
+function shopFilter(cat) {
+  state.shopFilter = cat;
+  renderShop();
+}
+
+function shopSearch(val) {
+  state.shopSearch = val;
+  renderShop();
+}
+
+function openCheckout(pid) {
+  state.checkoutProduct = PRODUCTS.find(function(p) { return p.id === pid; });
+  state.checkoutStep = 1;
+  state.checkoutInstallments = state.checkoutProduct.installments[0];
+  go('checkout');
+}
+
+// ═══════════════════════════════════════
+// CHECKOUT
+// ═══════════════════════════════════════
+function renderCheckout() {
+  var el = document.getElementById('screen-checkout');
+  var p = state.checkoutProduct;
+  if (!p) { go('shop'); return; }
+  var step = state.checkoutStep;
+  var inst = state.checkoutInstallments;
+  var perInst = Math.round(p.price / inst);
+
+  var stepsHtml = '<div style="display:flex;gap:8px;margin-bottom:24px">'
+    + [1,2,3].map(function(s) {
+      return '<div style="flex:1;height:4px;border-radius:2px;background:' + (s<=step?'#10B981':'#E2EAE4') + ';transition:background .3s"></div>';
+    }).join('')
+    + '</div>';
+
+  var content = '';
+  if (step === 1) {
+    content = '<div style="text-align:center;margin-bottom:24px;animation:scaleIn .4s ease">'
+      + '<div style="font-size:60px;margin-bottom:12px">' + p.img + '</div>'
+      + '<div style="font-size:18px;font-weight:800;color:#0D1F14">' + p.name + '</div>'
+      + '<div style="font-size:13px;color:#6A8E7A">' + p.store + '</div>'
+      + '<div style="font-size:28px;font-weight:900;color:#10B981;margin-top:8px">' + p.price.toLocaleString() + ' ر.س</div>'
+      + '</div>'
+      + '<div style="margin-bottom:20px">'
+      + '<div style="font-size:14px;font-weight:700;color:#0D1F14;margin-bottom:12px">عدد الأقساط</div>'
+      + '<div style="display:flex;gap:10px">'
+      + p.installments.map(function(n) {
+        return '<button onclick="selectInstallments(' + n + ')" style="flex:1;padding:16px;border-radius:16px;border:2px solid ' + (inst===n?'#10B981':'#E2EAE4') + ';background:' + (inst===n?'#E8F5EF':'#fff') + ';cursor:pointer;transition:all .2s">'
+          + '<div style="font-size:20px;font-weight:900;color:' + (inst===n?'#10B981':'#0D1F14') + '">' + n + '</div>'
+          + '<div style="font-size:11px;color:#8FA898">قسط</div>'
+          + '</button>';
+      }).join('')
+      + '</div>'
+      + '</div>'
+      + '<div class="card-g" style="margin-bottom:24px">'
+      + '<div style="display:flex;justify-content:space-between;margin-bottom:8px">'
+      + '<span style="color:#4A6455;font-size:13px">كل قسط</span>'
+      + '<span style="font-weight:800;color:#0D1F14">' + perInst.toLocaleString() + ' ر.س</span>'
+      + '</div>'
+      + '<div style="display:flex;justify-content:space-between">'
+      + '<span style="color:#4A6455;font-size:13px">Cashback</span>'
+      + '<span style="font-weight:800;color:#F59E0B">' + p.cashback + '</span>'
+      + '</div>'
+      + '</div>';
+  } else if (step === 2) {
+    content = '<div style="animation:fadeUp .4s ease">'
+      + '<div style="font-size:16px;font-weight:800;color:#0D1F14;margin-bottom:16px">بيانات الدفع</div>'
+      + '<div style="display:flex;flex-direction:column;gap:12px">'
+      + '<input class="inp" placeholder="رقم البطاقة" type="tel" maxlength="16">'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+      + '<input class="inp" placeholder="MM/YY">'
+      + '<input class="inp" placeholder="CVV" type="tel" maxlength="3">'
+      + '</div>'
+      + '<input class="inp" placeholder="الاسم على البطاقة">'
+      + '</div>'
+      + '<div class="card-g" style="margin-top:20px">'
+      + '<div style="display:flex;justify-content:space-between;margin-bottom:8px">'
+      + '<span style="color:#4A6455;font-size:13px">' + p.name + '</span>'
+      + '<span style="font-weight:800;color:#0D1F14">' + p.price.toLocaleString() + ' ر.س</span>'
+      + '</div>'
+      + '<div style="display:flex;justify-content:space-between">'
+      + '<span style="color:#4A6455;font-size:13px">القسط الأول الآن</span>'
+      + '<span style="font-weight:900;color:#10B981;font-size:18px">' + perInst.toLocaleString() + ' ر.س</span>'
+      + '</div>'
+      + '</div>'
+      + '</div>';
+  } else {
+    content = '<div style="text-align:center;animation:scaleIn .5s ease;padding:20px 0">'
+      + '<div style="width:80px;height:80px;border-radius:50%;background:#E8F5EF;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;animation:checkPop .5s ease">✅</div>'
+      + '<div style="font-size:22px;font-weight:900;color:#0D1F14;margin-bottom:8px">تم الطلب بنجاح! 🎉</div>'
+      + '<div style="font-size:14px;color:#6A8E7A;margin-bottom:24px">سيتم تفعيل التقسيط خلال دقائق</div>'
+      + '<div class="card" style="text-align:right;margin-bottom:20px">'
+      + '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:#6A8E7A">المنتج</span><span style="font-weight:700">' + p.name + '</span></div>'
+      + '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:#6A8E7A">الإجمالي</span><span style="font-weight:700">' + p.price.toLocaleString() + ' ر.س</span></div>'
+      + '<div style="display:flex;justify-content:space-between"><span style="color:#6A8E7A">القسط الشهري</span><span style="font-weight:800;color:#10B981">' + perInst.toLocaleString() + ' ر.س × ' + inst + '</span></div>'
+      + '</div>'
+      + '</div>';
+  }
+
+  el.innerHTML = '<div style="padding:50px 24px 40px;display:flex;flex-direction:column;min-height:100%">'
+    + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">'
+    + '<button class="back-btn" onclick="' + (step===1?'goBack()':'prevStep()') + '">←</button>'
+    + '<div style="font-size:18px;font-weight:800;color:#0D1F14">' + ['','اختر التقسيط','بيانات الدفع','تم الطلب'][step] + '</div>'
+    + '</div>'
+    + stepsHtml
+    + content
+    + '<div style="margin-top:auto;padding-top:16px">'
+    + '<button class="btn btn-g" onclick="' + (step<3?'nextStep()':'finishCheckout()') + '">'
+    + (step===1?'التالي ←':step===2?'تأكيد الطلب':'الذهاب لأقساطي')
+    + '</button>'
+    + '</div>'
+    + '</div>';
+}
+
+function selectInstallments(n) {
+  state.checkoutInstallments = n;
+  renderCheckout();
+}
+
+function nextStep() {
+  state.checkoutStep++;
+  renderCheckout();
+}
+
+function prevStep() {
+  state.checkoutStep--;
+  renderCheckout();
+}
+
+function finishCheckout() {
+  var p = state.checkoutProduct;
+  var newOrder = {
+    id: 'MY-00' + (state.orders.length + 1),
+    store: p.store,
+    item: p.name,
+    total: p.price,
+    paid: 1,
+    of: state.checkoutInstallments,
+    next: '15 أبريل',
+    daysLeft: 33,
+    logo: p.img,
+    status: 'active'
+  };
+  state.orders.push(newOrder);
+  showToast('🎉','تم إضافة طلبك','يمكنك متابعة أقساطك الآن');
+  go('orders');
+}
+
+// ═══════════════════════════════════════
+// WALLET
+// ═══════════════════════════════════════
+function renderWallet() {
+  var el = document.getElementById('screen-wallet');
+  var active = state.orders.filter(function(o) { return o.status==='active'; });
+  var done = state.orders.filter(function(o) { return o.status==='done'; });
+  var shown = state.walletTab === 'active' ? active : done;
+  var totalPending = active.reduce(function(s,o) { return s + Math.round(o.total/o.of)*(o.of-o.paid); }, 0);
+
+  el.innerHTML = '<div style="padding:44px 20px 20px">'
+    + '<div style="font-size:22px;font-weight:900;color:#0D1F14;margin-bottom:16px;animation:fadeDown .35s ease">💳 محفظتي</div>'
+    + '<div style="background:linear-gradient(135deg,#0D1F14,#1a3a25);border-radius:24px;padding:24px;margin-bottom:20px;color:#fff;animation:scaleIn .4s ease">'
+    + '<div style="font-size:13px;opacity:.7;margin-bottom:6px">المبالغ المستحقة</div>'
+    + '<div style="font-size:34px;font-weight:900;margin-bottom:4px">' + totalPending.toLocaleString() + ' <span style="font-size:16px">ر.س</span></div>'
+    + '<div style="font-size:12px;opacity:.6">موزعة على ' + active.length + ' طلبات نشطة</div>'
+    + '<div style="display:flex;gap:12px;margin-top:20px">'
+    + '<button onclick="go(\'postpone\')" style="flex:1;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:12px;padding:10px;font-family:Tajawal,sans-serif;font-size:13px;font-weight:700;cursor:pointer">⏰ تأجيل</button>'
+    + '<button onclick="go(\'budget\')" style="flex:1;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:12px;padding:10px;font-family:Tajawal,sans-serif;font-size:13px;font-weight:700;cursor:pointer">📊 ميزانية</button>'
+    + '</div>'
+    + '</div>'
+    + '<div class="tab-bar" style="margin-bottom:16px">'
+    + '<button class="tab ' + (state.walletTab==='active'?'on':'off') + '" onclick="walletTab(\'active\')">نشطة (' + active.length + ')</button>'
+    + '<button class="tab ' + (state.walletTab==='done'?'on':'off') + '" onclick="walletTab(\'done\')">مكتملة (' + done.length + ')</button>'
+    + '</div>'
+    + shown.map(function(o) {
+      var pct = Math.round((o.paid/o.of)*100);
+      return '<div class="card" style="margin-bottom:12px;animation:fadeUp .4s ease">'
+        + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">'
+        + '<div style="width:48px;height:48px;border-radius:16px;background:#E8F5EF;display:flex;align-items:center;justify-content:center;font-size:24px">' + o.logo + '</div>'
+        + '<div style="flex:1">'
+        + '<div style="font-size:15px;font-weight:700;color:#0D1F14">' + o.item + '</div>'
+        + '<div style="font-size:12px;color:#6A8E7A">' + o.store + ' • ' + o.id + '</div>'
+        + '</div>'
+        + '<div style="text-align:left">'
+        + '<div style="font-size:16px;font-weight:900;color:#0D1F14">' + o.total.toLocaleString() + '</div>'
+        + '<div style="font-size:11px;color:#8FA898">ر.س</div>'
+        + '</div>'
+        + '</div>'
+        + '<div class="progress-bar" style="margin-bottom:8px"><div class="progress-fill" style="width:' + pct + '%"></div></div>'
+        + '<div style="display:flex;justify-content:space-between">'
+        + '<span style="font-size:12px;color:#6A8E7A">' + o.paid + '/' + o.of + ' أقساط</span>'
+        + (o.status==='active' ? '<span style="font-size:12px;color:#10B981;font-weight:700">القادم: ' + o.next + '</span>' : '<span style="font-size:12px;color:#10B981;font-weight:700">✅ مكتمل</span>')
+        + '</div>'
+        + '</div>';
+    }).join('')
+    + '</div>';
+}
+
+function walletTab(tab) {
+  state.walletTab = tab;
+  renderWallet();
+}
+
+// ═══════════════════════════════════════
+// ORDERS
+// ═══════════════════════════════════════
+function renderOrders() {
+  var el = document.getElementById('screen-orders');
+  el.innerHTML = '<div style="padding:44px 20px 20px">'
+    + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">'
+    + '<button class="back-btn" onclick="go(\'home\')">←</button>'
+    + '<div style="font-size:20px;font-weight:900;color:#0D1F14">📋 أقساطي</div>'
+    + '</div>'
+    + state.orders.map(function(o) {
+      var pct = Math.round((o.paid/o.of)*100);
+      return '<div class="card" style="margin-bottom:12px">'
+        + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">'
+        + '<div style="width:48px;height:48px;border-radius:16px;background:#E8F5EF;display:flex;align-items:center;justify-content:center;font-size:24px">' + o.logo + '</div>'
+        + '<div style="flex:1">'
+        + '<div style="font-size:15px;font-weight:700;color:#0D1F14">' + o.item + '</div>'
+        + '<div style="font-size:12px;color:#6A8E7A">' + o.store + '</div>'
+        + '</div>'
+        + '<div style="background:' + (o.status==='done'?'#E8F5EF':'#FEF3C7') + ';color:' + (o.status==='done'?'#10B981':'#F59E0B') + ';border-radius:10px;padding:4px 10px;font-size:11px;font-weight:700">' + (o.status==='done'?'مكتمل':'نشط') + '</div>'
+        + '</div>'
+        + '<div class="progress-bar" style="margin-bottom:8px"><div class="progress-fill" style="width:' + pct + '%"></div></div>'
+        + '<div style="display:flex;justify-content:space-between;margin-bottom:12px">'
+        + '<span style="font-size:12px;color:#6A8E7A">' + o.paid + '/' + o.of + ' أقساط مدفوعة</span>'
+        + '<span style="font-size:13px;font-weight:700;color:#0D1F14">' + Math.round(o.total/o.of).toLocaleString() + ' ر.س/قسط</span>'
+        + '</div>'
+        + (o.status==='active' ? '<div style="display:flex;gap:8px">'
+          + '<button class="btn btn-g btn-sm" style="flex:1" onclick="payNow(\'' + o.id + '\')">دفع الآن</button>'
+          + '<button class="btn btn-ghost btn-sm" onclick="go(\'postpone\')">تأجيل</button>'
+          + '</div>' : '')
+        + '</div>';
+    }).join('')
+    + '</div>';
+}
+
+function payNow(orderId) {
+  var o = state.orders.find(function(x) { return x.id===orderId; });
+  if (o && o.paid < o.of) {
+    o.paid++;
+    if (o.paid === o.of) o.status = 'done';
+    showToast('✅','تم الدفع بنجاح','القسط ' + o.paid + ' من ' + o.of);
+    renderOrders();
+  }
+}
+
+// ═══════════════════════════════════════
+// POSTPONE
+// ═══════════════════════════════════════
+function renderPostpone() {
+  var el = document.getElementById('screen-postpone');
+  var active = state.orders.filter(function(o) { return o.status==='active'; });
+
+  el.innerHTML = '<div style="padding:50px 24px 40px;display:flex;flex-direction:column;min-height:100%">'
+    + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">'
+    + '<button class="back-btn" onclick="goBack()">←</button>'
+    + '<div style="font-size:18px;font-weight:800;color:#0D1F14">⏰ تأجيل قسط</div>'
+    + '</div>'
+    + '<div class="card-g" style="margin-bottom:20px">'
+    + '<div style="font-size:13px;font-weight:700;color:#4A6455;margin-bottom:4px">✦ ميزة مجانية</div>'
+    + '<div style="font-size:12px;color:#6A8E7A">يمكنك تأجيل قسط واحد مجاناً كل 3 أشهر</div>'
+    + '</div>'
+    + '<div style="font-size:14px;font-weight:700;color:#0D1F14;margin-bottom:12px">اختر الطلب</div>'
+    + active.map(function(o) {
+      var selected = state.postponeSelected === o.id;
+      return '<div onclick="selectPostpone(\'' + o.id + '\')" style="border:2px solid ' + (selected?'#10B981':'#E2EAE4') + ';border-radius:18px;padding:16px;margin-bottom:10px;cursor:pointer;background:' + (selected?'#E8F5EF':'#fff') + ';transition:all .2s">'
+        + '<div style="display:flex;align-items:center;gap:12px">'
+        + '<div style="font-size:24px">' + o.logo + '</div>'
+        + '<div style="flex:1">'
+        + '<div style="font-size:14px;font-weight:700;color:#0D1F14">' + o.item + '</div>'
+        + '<div style="font-size:12px;color:#6A8E7A">القسط القادم: ' + Math.round(o.total/o.of).toLocaleString() + ' ر.س</div>'
+        + '</div>'
+        + (selected ? '<div style="color:#10B981;font-size:20px">✓</div>' : '')
+        + '</div>'
+        + '</div>';
+    }).join('')
+    + '<div style="margin-top:auto;padding-top:16px">'
+    + '<button class="btn btn-g" ' + (state.postponeSelected?'':'disabled') + ' onclick="confirmPostpone()">تأكيد التأجيل ⏰</button>'
+    + '</div>'
+    + '</div>';
+}
+
+function selectPostpone(id) {
+  state.postponeSelected = id;
+  renderPostpone();
+}
+
+function confirmPostpone() {
+  showToast('⏰','تم التأجيل بنجاح','القسط سيُؤجّل للشهر القادم');
+  state.postponeSelected = null;
+  go('wallet');
+}
+
+// ═══════════════════════════════════════
+// BUDGET
+// ═══════════════════════════════════════
+function renderBudget() {
+  var el = document.getElementById('screen-budget');
+  var budget = 2000;
+  var spent = 1413;
+  var pct = Math.round((spent/budget)*100);
+  var color = pct>85?'#EF4444':pct>60?'#F59E0B':'#10B981';
+  var remaining = budget - spent;
+
+  var circumference = 2 * Math.PI * 76;
+  var dashOffset = circumference * (1 - pct/100);
+
+  el.innerHTML = '<div style="padding:50px 24px 40px">'
+    + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">'
+    + '<button class="back-btn" onclick="goBack()">←</button>'
+    + '<div style="font-size:18px;font-weight:800;color:#0D1F14">📊 الميزانية الذكية</div>'
+    + '</div>'
+    + '<div style="text-align:center;margin-bottom:24px">'
+    + '<svg width="180" height="180" style="transform:rotate(-90deg);display:block;margin:0 auto 16px">'
+    + '<circle cx="90" cy="90" r="76" fill="none" stroke="#E2EAE4" stroke-width="12"/>'
+    + '<circle cx="90" cy="90" r="76" fill="none" stroke="' + color + '" stroke-width="12" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + dashOffset + '" stroke-linecap="round" style="transition:stroke-dashoffset 1s ease"/>'
+    + '</svg>'
+    + '<div style="margin-top:-16px">'
+    + '<div style="font-size:34px;font-weight:900;color:#0D1F14">' + pct + '%</div>'
+    + '<div style="font-size:12px;color:#8FA898">مستخدم</div>'
+    + '</div>'
+    + '<div style="display:flex;justify-content:center;gap:32px;margin-top:16px">'
+    + '<div><div style="font-size:18px;font-weight:900;color:#EF4444">' + spent.toLocaleString() + ' ر.س</div><div style="font-size:11px;color:#8FA898">مصروف</div></div>'
+    + '<div><div style="font-size:18px;font-weight:900;color:' + color + '">' + remaining.toLocaleString() + ' ر.س</div><div style="font-size:11px;color:#8FA898">متبقي</div></div>'
+    + '</div>'
+    + '</div>'
+    + '<div class="card" style="margin-bottom:12px">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center">'
+    + '<div><div style="font-size:13px;font-weight:700;color:#4A6455">الميزانية الشهرية</div>'
+    + '<div style="font-size:22px;font-weight:900;color:#10B981;margin-top:4px">' + budget.toLocaleString() + ' ر.س</div></div>'
+    + '<button onclick="showToast(\'📝\',\'تعديل الميزانية\',\'قريباً!\')" style="background:#E8F5EF;border:none;color:#10B981;border-radius:10px;padding:8px 14px;font-family:Tajawal,sans-serif;font-size:13px;font-weight:700;cursor:pointer">تعديل</button>'
+    + '</div>'
+    + '</div>'
+    + '<div class="card">'
+    + '<div style="font-size:14px;font-weight:700;color:#0D1F14;margin-bottom:12px">الأشهر السابقة</div>'
+    + [['يناير',1800],['فبراير',1250],['مارس',1413]].map(function(m) {
+      var p2 = Math.round((m[1]/budget)*100);
+      var c2 = p2>85?'#EF4444':p2>60?'#F59E0B':'#10B981';
+      return '<div style="margin-bottom:12px">'
+        + '<div style="display:flex;justify-content:space-between;margin-bottom:6px">'
+        + '<span style="font-size:13px;color:#4A6455">' + m[0] + '</span>'
+        + '<span style="font-size:13px;font-weight:700;color:#0D1F14">' + m[1].toLocaleString() + ' ر.س</span>'
+        + '</div>'
+        + '<div class="progress-bar"><div class="progress-fill" style="width:' + p2 + '%;background:' + c2 + '"></div></div>'
+        + '</div>';
+    }).join('')
+    + '</div>'
+    + '</div>';
+}
+
+// ═══════════════════════════════════════
+// NOTIFS
+// ═══════════════════════════════════════
+function renderNotifs() {
+  var el = document.getElementById('screen-notifs');
+  el.innerHTML = '<div style="padding:44px 20px 20px">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">'
+    + '<div style="font-size:22px;font-weight:900;color:#0D1F14">🔔 الإشعارات</div>'
+    + '<button onclick="markAllRead()" style="font-size:13px;color:#10B981;font-weight:700;background:none;border:none;cursor:pointer">قراءة الكل</button>'
+    + '</div>'
+    + state.notifs.map(function(n) {
+      return '<div onclick="readNotif(' + n.id + ')" style="background:' + (n.read?'#fff':'#F0FDF4') + ';border:1px solid ' + (n.read?'#E8EDE9':'#C6E8D6') + ';border-radius:18px;padding:16px;margin-bottom:10px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:all .2s">'
+        + '<div style="width:44px;height:44px;border-radius:14px;background:' + (n.read?'#EEF3EF':'#E8F5EF') + ';display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">' + n.icon + '</div>'
+        + '<div style="flex:1">'
+        + '<div style="font-size:14px;font-weight:' + (n.read?'600':'800') + ';color:#0D1F14">' + n.title + '</div>'
+        + '<div style="font-size:12px;color:#6A8E7A;margin-top:2px">' + n.sub + '</div>'
+        + '<div style="font-size:11px;color:#9BB5A3;margin-top:4px">' + n.time + '</div>'
+        + '</div>'
+        + (!n.read ? '<div style="width:8px;height:8px;border-radius:50%;background:#10B981;flex-shrink:0"></div>' : '')
+        + '</div>';
+    }).join('')
+    + '</div>';
+}
+
+function readNotif(id) {
+  var n = state.notifs.find(function(x) { return x.id===id; });
+  if (n) n.read = true;
+  renderNotifs();
+}
+
+function markAllRead() {
+  state.notifs.forEach(function(n) { n.read = true; });
+  renderNotifs();
+}
+
+// ═══════════════════════════════════════
+// DEALS
+// ═══════════════════════════════════════
+function renderDeals() {
+  var el = document.getElementById('screen-deals');
+  el.innerHTML = '<div style="padding:44px 20px 20px">'
+    + '<div style="font-size:22px;font-weight:900;color:#0D1F14;margin-bottom:16px">🔥 أفضل الصفقات</div>'
+    + state.deals.map(function(d) {
+      return '<div class="card" style="margin-bottom:12px">'
+        + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
+        + '<div style="width:36px;height:36px;border-radius:50%;background:#EEF3EF;display:flex;align-items:center;justify-content:center;font-size:18px">' + d.avatar + '</div>'
+        + '<div style="flex:1">'
+        + '<div style="font-size:13px;font-weight:700;color:#0D1F14">' + d.user + '</div>'
+        + '<div style="font-size:11px;color:#8FA898">' + d.time + '</div>'
+        + '</div>'
+        + '<div style="background:#E8F5EF;color:#10B981;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700">' + d.tag + '</div>'
+        + '</div>'
+        + '<div style="font-size:15px;font-weight:800;color:#0D1F14;margin-bottom:4px">' + d.product + '</div>'
+        + '<div style="font-size:13px;color:#6A8E7A;margin-bottom:10px">' + d.store + ' • cashback ' + d.cashback + '</div>'
+        + '<div style="display:flex;justify-content:space-between;align-items:center">'
+        + '<div style="background:#FEF3C7;color:#F59E0B;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:800">توفير ' + d.saving + '</div>'
+        + '<button onclick="voteDeal(' + d.id + ')" style="display:flex;align-items:center;gap:6px;background:' + (d.userVoted?'#E8F5EF':'#F5F7FA') + ';border:1px solid ' + (d.userVoted?'#C6E8D6':'#E2EAE4') + ';border-radius:10px;padding:6px 12px;cursor:pointer;font-family:Tajawal,sans-serif;font-weight:700;color:' + (d.userVoted?'#10B981':'#4A6455') + ';font-size:13px">'
+        + '👍 ' + d.votes
+        + '</button>'
+        + '</div>'
+        + '</div>';
+    }).join('')
+    + '</div>';
+}
+
+function voteDeal(id) {
+  var d = state.deals.find(function(x) { return x.id===id; });
+  if (d) {
+    d.userVoted = !d.userVoted;
+    d.votes += d.userVoted ? 1 : -1;
+    renderDeals();
+  }
+}
+
+// ═══════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════
+function renderProfile() {
+  var el = document.getElementById('screen-profile');
+  el.innerHTML = '<div style="padding:44px 20px 20px">'
+    + '<div style="text-align:center;margin-bottom:24px;animation:fadeDown .4s ease">'
+    + '<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#10B981,#065F46);display:flex;align-items:center;justify-content:center;font-size:36px;color:#fff;margin:0 auto 12px">👤</div>'
+    + '<div style="font-size:20px;font-weight:900;color:#0D1F14">محمد عاصم</div>'
+    + '<div style="font-size:13px;color:#6A8E7A">+966 5X XXX XXXX</div>'
+    + '</div>'
+    + '<div class="card-g" style="margin-bottom:20px;text-align:center">'
+    + '<div style="font-size:13px;color:#4A6455;margin-bottom:4px">نقاط الولاء</div>'
+    + '<div style="font-size:32px;font-weight:900;color:#F59E0B">830 ✦</div>'
+    + '<div style="font-size:12px;color:#6A8E7A;margin-top:4px">المستوى الفضي 🥈</div>'
+    + '<button onclick="go(\'rewards\')" class="btn btn-ghost btn-sm" style="margin-top:12px;width:auto;padding:8px 20px">استبدال النقاط</button>'
+    + '</div>'
+    + [
+        ['📋','أقساطي','orders'],
+        ['💳','محفظتي','wallet'],
+        ['🎯','أهدافي','goal'],
+        ['📊','الميزانية','budget'],
+        ['🔥','الصفقات','deals'],
+      ].map(function(item) {
+        return '<div onclick="go(\'' + item[2] + '\')" style="background:#fff;border:1px solid #E8EDE9;border-radius:16px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer">'
+          + '<span style="font-size:22px">' + item[0] + '</span>'
+          + '<span style="font-size:15px;font-weight:700;color:#0D1F14;flex:1">' + item[1] + '</span>'
+          + '<span style="color:#C0CEC5">←</span>'
+          + '</div>';
+      }).join('')
+    + '<button onclick="logout()" class="btn btn-ghost" style="margin-top:8px">تسجيل الخروج</button>'
+    + '</div>';
+}
+
+function logout() {
+  state.loggedIn = false;
+  state.pinEntry = '';
+  go('pin-login');
+}
+
+// ═══════════════════════════════════════
+// REWARDS
+// ═══════════════════════════════════════
+function renderRewards() {
+  var el = document.getElementById('screen-rewards');
+  var rewards = [
+    {icon:'🎁',name:'خصم 50 ر.س',points:200,store:'نون'},
+    {icon:'☕',name:'قهوة مجانية',points:100,store:'ستاربكس'},
+    {icon:'🎬',name:'اشتراك نتفليكس شهر',points:500,store:'نتفليكس'},
+    {icon:'✈️',name:'ترقية درجة طيران',points:1000,store:'الخطوط'},
+  ];
+
+  el.innerHTML = '<div style="padding:50px 24px 40px">'
+    + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">'
+    + '<button class="back-btn" onclick="goBack()">←</button>'
+    + '<div style="font-size:18px;font-weight:800;color:#0D1F14">✦ نقاط الولاء</div>'
+    + '</div>'
+    + '<div style="background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:24px;padding:24px;margin-bottom:20px;color:#fff;text-align:center">'
+    + '<div style="font-size:13px;opacity:.8;margin-bottom:8px">رصيد نقاطك</div>'
+    + '<div style="font-size:48px;font-weight:900">830</div>'
+    + '<div style="font-size:14px;opacity:.8">نقطة ✦</div>'
+    + '</div>'
+    + '<div style="font-size:15px;font-weight:800;color:#0D1F14;margin-bottom:12px">المكافآت المتاحة</div>'
+    + rewards.map(function(r) {
+      return '<div class="card" style="margin-bottom:10px;display:flex;align-items:center;gap:12px">'
+        + '<div style="width:48px;height:48px;border-radius:16px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:24px">' + r.icon + '</div>'
+        + '<div style="flex:1">'
+        + '<div style="font-size:14px;font-weight:700;color:#0D1F14">' + r.name + '</div>'
+        + '<div style="font-size:12px;color:#8FA898">' + r.store + '</div>'
+        + '</div>'
+        + '<button onclick="redeemReward(' + r.points + ')" style="background:#FEF3C7;border:none;color:#F59E0B;border-radius:10px;padding:8px 14px;font-family:Tajawal,sans-serif;font-size:13px;font-weight:700;cursor:pointer">' + r.points + ' ✦</button>'
+        + '</div>';
+    }).join('')
+    + '</div>';
+}
+
+function redeemReward(points) {
+  showToast('✦','تم الاستبدال!','مبروك على مكافأتك');
+}
+
+// ═══════════════════════════════════════
+// GOAL
+// ═══════════════════════════════════════
+function renderGoal() {
+  var el = document.getElementById('screen-goal');
+  el.innerHTML = '<div style="padding:50px 24px 40px">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">'
+    + '<div style="display:flex;align-items:center;gap:12px">'
+    + '<button class="back-btn" onclick="go(\'home\')">←</button>'
+    + '<div style="font-size:18px;font-weight:800;color:#0D1F14">🎯 قسّط هدفك</div>'
+    + '</div>'
+    + '<button onclick="addGoal()" style="background:#E8F5EF;border:none;color:#10B981;border-radius:10px;padding:8px 14px;font-family:Tajawal,sans-serif;font-size:13px;font-weight:700;cursor:pointer">+ هدف</button>'
+    + '</div>'
+    + state.goals.map(function(g) {
+      var pct = Math.round((g.saved/g.target)*100);
+      var monthly = Math.round((g.target - g.saved)/g.months);
+      return '<div class="card" style="margin-bottom:12px">'
+        + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">'
+        + '<div style="width:48px;height:48px;border-radius:16px;background:#E8F5EF;display:flex;align-items:center;justify-content:center;font-size:24px">' + g.icon + '</div>'
+        + '<div style="flex:1">'
+        + '<div style="font-size:15px;font-weight:700;color:#0D1F14">' + g.name + '</div>'
+        + '<div style="font-size:12px;color:#6A8E7A">' + pct + '% مكتمل</div>'
+        + '</div>'
+        + '<div style="text-align:left">'
+        + '<div style="font-size:16px;font-weight:900;color:#10B981">' + g.saved.toLocaleString() + '</div>'
+        + '<div style="font-size:11px;color:#8FA898">من ' + g.target.toLocaleString() + '</div>'
+        + '</div>'
+        + '</div>'
+        + '<div class="progress-bar" style="margin-bottom:12px"><div class="progress-fill" style="width:' + pct + '%"></div></div>'
+        + '<div style="display:flex;justify-content:space-between;align-items:center">'
+        + '<div style="background:#E8F5EF;border-radius:10px;padding:8px 12px">'
+        + '<div style="font-size:11px;color:#4A6455">القسط الشهري</div>'
+        + '<div style="font-size:16px;font-weight:900;color:#10B981">' + monthly.toLocaleString() + ' ر.س</div>'
+        + '</div>'
+        + '<button onclick="showToast(\'✅\',\'تم دفع الدفعة!\',\'شكراً على الالتزام\')" class="btn btn-g btn-sm" style="width:auto">ادفع الآن</button>'
+        + '</div>'
+        + '</div>';
+    }).join('')
+    + '</div>';
+}
+
+function addGoal() {
+  showToast('🎯','إضافة هدف جديد','قريباً!');
+}
+
+// ═══════════════════════════════════════
+// START
+// ═══════════════════════════════════════
+renderScreen('onboarding');
+</script>
+</body>
+</html>
