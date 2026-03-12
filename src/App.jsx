@@ -81,7 +81,7 @@ function Btn({ children, onClick, disabled, ghost, loading }) {
     onClick?.();
   };
   return (
-    <button className={btn ${ghost ? "btn-ghost" : "btn-g"}} onClick={click} disabled={disabled}>
+    <button className={`btn ${ghost ? "btn-ghost" : "btn-g"}} onClick={click} disabled={disabled}>
       {loading ? <div style={{ width:20,height:20,border:"2.5px solid rgba(255,255,255,.3)",borderTopColor:"#fff",borderRadius:"50%",animation:"spin .7s linear infinite",margin:"0 auto" }}/> : children}
       {rip.map(r => <span key={r.id} style={{ position:"absolute",borderRadius:"50%",background:"#C6E8D6",width:120,height:120,marginTop:-60,marginLeft:-60,left:r.x,top:r.y,animation:"ripple .7s linear",pointerEvents:"none" }}/>)}
     </button>
@@ -1149,4 +1149,5 @@ export default function App() {
     </div>
   );
 }
+
 
